@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Espace Élève</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="eleve">
+  <div class="navbar">
+    <a href="dashboard.html">🏠 Accueil</a>
+    <a href="index.html">🔓 Déconnexion</a>
+  </div>
+
+  <h1>Espace Élève</h1>
+  <h2>Devoirs</h2>
+  <ul id="devoirs"></ul>
+
+  <h2>Observations</h2>
+  <ul id="observations"></ul>
+
+  <script>
+    const devoirs = JSON.parse(localStorage.getItem("devoirs") || "[]");
+    const observations = JSON.parse(localStorage.getItem("observations") || "[]");
+
+    const devoirsList = document.getElementById("devoirs");
+    devoirs.forEach(d => {
+      const li = document.createElement("li");
+      li.textContent = d.titre + " : " + d.contenu;
+      devoirsList.appendChild(li);
+    });
+
+    const obsList = document.getElementById("observations");
+    observations.forEach(o => {
+      const li = document.createElement("li");
+      li.textContent = o.eleve + " : " + o.observation;
+      obsList.appendChild(li);
+    });
+  </script>
+</body>
+</html>

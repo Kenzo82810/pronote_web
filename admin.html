@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Pronote</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h1>Gestion des Comptes</h1>
+
+  <form id="addForm">
+    <input type="text" id="identifiant" placeholder="Identifiant" required>
+    <input type="password" id="mdp" placeholder="Mot de passe" required>
+    <select id="role" required>
+      <option value="">-- Sélectionner un rôle --</option>
+      <option value="prof">Professeur</option>
+      <option value="eleve">Élève</option>
+      <option value="cpe">CPE</option>
+    </select>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <table id="compteTable">
+    <thead>
+      <tr>
+        <th>Identifiant</th>
+        <th>Rôle</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function getComptes() {
+      return JSON.parse(localStorage.getItem("comptes") || "[]");
+    }
+
+    function setComptes(comptes) {
+      localStorage.setItem("comptes", JSON.stringify(comptes));
+    }
+
+    function afficherComptes() {
+      const comptes = getComptes();
+      const tbody = document.querySelector("#compteTable tbody");
+      tbody.innerHTML = "";
+      comptes.forEach((c, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${c.identifiant}</td>
+          <td>${c.role}</td>
+          <td><button onclick="supprimerCompte(${i})">Supprimer</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function supprimerCompte(index) {
+      const comptes = getComptes();
+      comptes.splice(index, 1);
+      setComptes(comptes);
+      afficherComptes();
+    }
+
+    document.getElementById("addForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const identifiant = document.getElementById("identifiant").value;
+      const mdp = document.getElementById("mdp").value;
+      const role = document.getElementById("role").value;
+
+      const comptes = getComptes();
+      comptes.push({ identifiant, mdp, role });
+      setComptes(comptes);
+      afficherComptes();
+      this.reset();
+    });
+
+    afficherComptes();
+  </script>
+</body>
+</html>

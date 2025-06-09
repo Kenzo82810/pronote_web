@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pronote Web - Tableau de Bord</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef1f5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: #3f51b5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h3 {
+      margin-top: 0;
+    }
+    form input, form textarea {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background: #303f9f;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      background: #f9f9f9;
+      margin: 0.3rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Tableau de Bord - Pronote Web</h1>
+  <div id="role-info"></div>
+  <button onclick="logout()" style="position:absolute; top:1rem; right:1rem;">Déconnexion</button>
+</header>
+
+<div class="content">
+  <div class="card">
+    <h3>Devoirs</h3>
+    <ul id="devoir-list"></ul>
+    <form id="devoir-form" style="margin-top:1rem;">
+      <input type="text" id="devoir-matiere" placeholder="Matière" required />
+      <textarea id="devoir-contenu" placeholder="Devoir à faire" required></textarea>
+      <button type="submit">Ajouter</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Observations</h3>
+    <ul id="observation-list"></ul>
+    <form id="observation-form" style="margin-top:1rem;">
+      <textarea id="observation-contenu" placeholder="Observation..." required></textarea>
+      <button type="submit">Ajouter</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Heures de Colle</h3>
+    <ul id="colle-list"></ul>
+    <form id="colle-form" style="margin-top:1rem;">
+      <textarea id="colle-contenu" placeholder="Motif de colle..." required></textarea>
+      <button type="submit">Ajouter</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const username = localStorage.getItem('username') || 'Inconnu';
+  const role = localStorage.getItem('role') || 'eleve';
+  document.getElementById('role-info').textContent = `Connecté en tant que : ${username} (${role})`;
+
+  const devoirList = document.getElementById('devoir-list');
+  const observationList = document.getElementById('observation-list');
+  const colleList = document.getElementById('colle-list');
+
+  // Stockage local
+  const devoirs = JSON.parse(localStorage.getItem('devoirs') || '[]');
+  const observations = JSON.parse(localStorage.getItem('observations') || '[]');
+  const colles = JSON.parse(localStorage.getItem('colles') || '[]');
+
+  // Remplir les listes
+  devoirs.forEach(d => addToList(devoirList, `${d.matiere} : ${d.contenu}`));
+  observations.forEach(o => addToList(observationList, o));
+  colles.forEach(c => addToList(colleList, c));
+
+  // Permissions selon le rôle
+  if (role !== 'professeur') {
+    document.getElementById('devoir-form').style.display = 'none';
+  }
+  if (role !== 'professeur' && role !== 'CPE' && role !== 'principal') {
+    document.getElementById('observation-form').style.display = 'none';
+  }
+  if (role !== 'CPE' && role !== 'principal') {
+    document.getElementById('colle-form').style.display = 'none';
+  }
+
+  // Ajout devoir
+  document.getElementById('devoir-form').onsubmit = function(e) {
+    e.preventDefault();
+    const matiere = document.getElementById('devoir-matiere').value;
+    const contenu = document.getElementById('devoir-contenu').value;
+    devoirs.push({ matiere, contenu });
+    localStorage.setItem('devoirs', JSON.stringify(devoirs));
+    addToList(devoirList, `${matiere} : ${contenu}`);
+    e.target.reset();
+  };
+
+  // Ajout observation
+  document.getElementById('observation-form').onsubmit = function(e) {
+    e.preventDefault();
+    const contenu = document.getElementById('observation-contenu').value;
+    observations.push(contenu);
+    localStorage.setItem('observations', JSON.stringify(observations));
+    addToList(observationList, contenu);
+    e.target.reset();
+  };
+
+  // Ajout colle
+  document.getElementById('colle-form').onsubmit = function(e) {
+    e.preventDefault();
+    const contenu = document.getElementById('colle-contenu').value;
+    colles.push(contenu);
+    localStorage.setItem('colles', JSON.stringify(colles));
+    addToList(colleList, contenu);
+    e.target.reset();
+  };
+
+  function addToList(list, text) {
+    const li = document.createElement('li');
+    li.textContent = text;
+    list.appendChild(li);
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
+</script>
+</body>
+</html>

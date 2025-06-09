@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestion des Observations</title>
+</head>
+<body>
+  <h1>Observations</h1>
+
+  <div id="formulaireObservation">
+    <input type="text" id="contenu" placeholder="Contenu de l'observation" />
+    <button onclick="ajouterObservation()">Ajouter</button>
+  </div>
+
+  <ul id="listeObservations"></ul>
+
+  <script>
+    function getObservations() {
+      return JSON.parse(localStorage.getItem("observations") || "[]");
+    }
+
+    function setObservations(observations) {
+      localStorage.setItem("observations", JSON.stringify(observations));
+    }
+
+    function afficherObservations() {
+      const observations = getObservations();
+      const ul = document.getElementById("listeObservations");
+      ul.innerHTML = "";
+      observations.forEach((obs, i) => {
+        const li = document.createElement("li");
+        li.textContent = obs.contenu;
+        const btnSuppr = document.createElement("button");
+        btnSuppr.textContent = "Supprimer";
+        btnSuppr.onclick = () => {
+          observations.splice(i, 1);
+          setObservations(observations);
+          afficherObservations();
+        };
+        li.appendChild(btnSuppr);
+        ul.appendChild(li);
+      });
+    }
+
+    function ajouterObservation() {
+      const contenu = document.getElementById("contenu").value.trim();
+      if (!contenu) {
+        alert("Merci de remplir le contenu");
+        return;
+      }
+      const observations = getObservations();
+      observations.push({ contenu });
+      setObservations(observations);
+      afficherObservations();
+      document.getElementById("contenu").value = "";
+    }
+
+    afficherObservations();
+  </script>
+</body>
+</html>
