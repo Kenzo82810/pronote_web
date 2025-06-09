@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestion des Devoirs</title>
+</head>
+<body>
+  <h1>Devoirs</h1>
+
+  <div id="formulaireDevoir">
+    <input type="text" id="titre" placeholder="Titre du devoir" />
+    <input type="date" id="date" />
+    <button onclick="ajouterDevoir()">Ajouter</button>
+  </div>
+
+  <ul id="listeDevoirs"></ul>
+
+  <script>
+    // Récupérer les devoirs
+    function getDevoirs() {
+      return JSON.parse(localStorage.getItem("devoirs") || "[]");
+    }
+
+    // Sauvegarder les devoirs
+    function setDevoirs(devoirs) {
+      localStorage.setItem("devoirs", JSON.stringify(devoirs));
+    }
+
+    // Afficher la liste des devoirs
+    function afficherDevoirs() {
+      const devoirs = getDevoirs();
+      const ul = document.getElementById("listeDevoirs");
+      ul.innerHTML = "";
+      devoirs.forEach((d, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${d.titre} - ${d.date}`;
+        const btnSuppr = document.createElement("button");
+        btnSuppr.textContent = "Supprimer";
+        btnSuppr.onclick = () => {
+          devoirs.splice(i, 1);
+          setDevoirs(devoirs);
+          afficherDevoirs();
+        };
+        li.appendChild(btnSuppr);
+        ul.appendChild(li);
+      });
+    }
+
+    // Ajouter un devoir
+    function ajouterDevoir() {
+      const titre = document.getElementById("titre").value.trim();
+      const date = document.getElementById("date").value;
+      if (!titre || !date) {
+        alert("Merci de remplir tous les champs");
+        return;
+      }
+      const devoirs = getDevoirs();
+      devoirs.push({ titre, date });
+      setDevoirs(devoirs);
+      afficherDevoirs();
+      document.getElementById("titre").value = "";
+      document.getElementById("date").value = "";
+    }
+
+    afficherDevoirs();
+  </script>
+</body>
+</html>

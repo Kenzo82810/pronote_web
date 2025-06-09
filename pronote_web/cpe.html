@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Espace CPE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="cpe">
+  <div class="navbar">
+    <a href="dashboard.html">🏠 Accueil</a>
+    <a href="index.html">🔓 Déconnexion</a>
+  </div>
+
+  <h1>Espace CPE</h1>
+  <form id="obsForm">
+    <input type="text" id="eleve" placeholder="Nom de l'élève" required><br>
+    <textarea id="observation" placeholder="Observation" required></textarea><br>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <script>
+    document.getElementById("obsForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const eleve = document.getElementById("eleve").value;
+      const observation = document.getElementById("observation").value;
+
+      const observations = JSON.parse(localStorage.getItem("observations") || "[]");
+      observations.push({ eleve, observation });
+      localStorage.setItem("observations", JSON.stringify(observations));
+
+      alert("Observation enregistrée !");
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

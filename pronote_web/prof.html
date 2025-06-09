@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Espace Professeur</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="prof">
+  <div class="navbar">
+    <a href="dashboard.html">🏠 Accueil</a>
+    <a href="index.html">🔓 Déconnexion</a>
+  </div>
+
+  <h1>Espace Professeur</h1>
+  <form id="devoirForm">
+    <input type="text" id="titre" placeholder="Titre du devoir" required><br>
+    <textarea id="contenu" placeholder="Contenu" required></textarea><br>
+    <button type="submit">Créer</button>
+  </form>
+
+  <script>
+    document.getElementById("devoirForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const titre = document.getElementById("titre").value;
+      const contenu = document.getElementById("contenu").value;
+
+      const devoirs = JSON.parse(localStorage.getItem("devoirs") || "[]");
+      devoirs.push({ titre, contenu });
+      localStorage.setItem("devoirs", JSON.stringify(devoirs));
+
+      alert("Devoir ajouté !");
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

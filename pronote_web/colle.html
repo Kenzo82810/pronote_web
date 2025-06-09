@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestion des Heures de Colle</title>
+</head>
+<body>
+  <h1>Heures de Colle</h1>
+
+  <div id="formulaireColle">
+    <input type="text" id="eleve" placeholder="Nom de l'élève" />
+    <input type="number" id="duree" placeholder="Durée (en heures)" min="1" />
+    <button onclick="ajouterColle()">Ajouter</button>
+  </div>
+
+  <ul id="listeColles"></ul>
+
+  <script>
+    function getColles() {
+      return JSON.parse(localStorage.getItem("colles") || "[]");
+    }
+
+    function setColles(colles) {
+      localStorage.setItem("colles", JSON.stringify(colles));
+    }
+
+    function afficherColles() {
+      const colles = getColles();
+      const ul = document.getElementById("listeColles");
+      ul.innerHTML = "";
+      colles.forEach((colle, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${colle.eleve} - ${colle.duree}h`;
+        const btnSuppr = document.createElement("button");
+        btnSuppr.textContent = "Supprimer";
+        btnSuppr.onclick = () => {
+          colles.splice(i, 1);
+          setColles(colles);
+          afficherColles();
+        };
+        li.appendChild(btnSuppr);
+        ul.appendChild(li);
+      });
+    }
+
+    function ajouterColle() {
+      const eleve = document.getElementById("eleve").value.trim();
+      const duree = parseInt(document.getElementById("duree").value, 10);
+      if (!eleve || !duree || duree < 1) {
+        alert("Merci de remplir correctement tous les champs");
+        return;
+      }
+      const colles = getColles();
+      colles.push({ eleve, duree });
+      setColles(colles);
+      afficherColles();
+      document.getElementById("eleve").value = "";
+      document.getElementById("duree").value = "";
+    }
+
+    afficherColles();
+  </script>
+</body>
+</html>
